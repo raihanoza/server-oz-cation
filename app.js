@@ -6,15 +6,23 @@ var logger = require("morgan");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
+// import mongoose
+const mongoose = require("mongoose");
+mongoose.connect(
+  "mongodb+srv://ozcation:apaaja18@cluster0.iubu45n.mongodb.net/?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  }
+);
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-//router admin
+// router admin
 const adminRouter = require("./routes/admin");
 const apiRouter = require("./routes/api");
-//Connect Mongoose
-const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/db_ozcation");
 
 var app = express();
 
@@ -43,9 +51,10 @@ app.use(
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-//admin
+// admin
 app.use("/admin", adminRouter);
 app.use("/api/v1/member", apiRouter);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

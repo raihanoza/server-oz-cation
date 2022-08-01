@@ -46,11 +46,14 @@ module.exports = {
         res.redirect("/admin/signin");
       }
 
-      req.session.user = { id: user.ud, username: user.username };
+      req.session.user = {
+        id: user.id,
+        username: user.username
+      };
 
       res.redirect("/admin/dashboard");
     } catch (error) {
-      res.redirect("/admin/signin");
+      // res.redirect("/admin/signin");
     }
   },
 
@@ -58,6 +61,7 @@ module.exports = {
     req.session.destroy();
     res.redirect("/admin/signin");
   },
+
   viewDashboard: async (req, res) => {
     try {
       const member = await Member.find();
@@ -70,7 +74,9 @@ module.exports = {
         booking,
         item
       });
-    } catch (error) {}
+    } catch (error) {
+      res.redirect("/admin/dashboard");
+    }
   },
 
   viewCategory: async (req, res) => {
@@ -557,6 +563,7 @@ module.exports = {
       res.redirect(`/admin/item/show-detail-item/${itemId}`);
     }
   },
+
   deleteActivity: async (req, res) => {
     const { id, itemId } = req.params;
     try {
@@ -588,7 +595,7 @@ module.exports = {
         .populate("bankId");
 
       res.render("admin/booking/view_booking", {
-        title: "Oz-Cation | Booking",
+        title: "Staycation | Booking",
         user: req.session.user,
         booking
       });
@@ -596,17 +603,20 @@ module.exports = {
       res.redirect("/admin/booking");
     }
   },
+
   showDetailBooking: async (req, res) => {
     const { id } = req.params;
     try {
-      const booking = await Booking.findOne({ _id: id })
-        .populate("memberId")
-        .populate("bankId");
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
+
+      const booking = await Booking.findOne({ _id: id })
+        .populate("memberId")
+        .populate("bankId");
+
       res.render("admin/booking/show_detail_booking", {
-        title: "Oz-Cation | Detail Booking",
+        title: "Staycation | Detail Booking",
         user: req.session.user,
         booking,
         alert
@@ -615,19 +625,21 @@ module.exports = {
       res.redirect("/admin/booking");
     }
   },
+
   actionConfirmation: async (req, res) => {
     const { id } = req.params;
     try {
       const booking = await Booking.findOne({ _id: id });
       booking.payments.status = "Accept";
       await booking.save();
-      req.flash("alertMessage", "Success Konfirmasi Pembayaran");
+      req.flash("alertMessage", "Success Confirmation Pembayaran");
       req.flash("alertStatus", "success");
       res.redirect(`/admin/booking/${id}`);
     } catch (error) {
       res.redirect(`/admin/booking/${id}`);
     }
   },
+
   actionReject: async (req, res) => {
     const { id } = req.params;
     try {
