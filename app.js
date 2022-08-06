@@ -7,6 +7,7 @@ const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
 const cors = require("cors");
+const dotenv = require("dotenv");
 // import mongoose
 const mongoose = require("mongoose");
 mongoose.connect(
